@@ -14,27 +14,27 @@ def radar_to_cartesian(file_path, variable='DBZH'):
        sweep_data = ds[variable].values[start_gate_idx:end_gate_idx].reshape(-1, len(ds['range']))
        
        if sweep_data.size > 0:
-           # 방위각과 거리 정보
+           # Azimuth and range information
            azimuths = np.radians(ds.azimuth[start_idx:end_idx+1].values)
            ranges = ds.range.values
            
-           # sweep_data와 동일한 크기의 메쉬그리드 생성
+           # Create meshgrid the same size as sweep_data
            r, az = np.meshgrid(ranges, azimuths[:sweep_data.shape[0]])
            
-           # 극좌표를 카테시안 좌표로 변환
+           # Convert polar coordinates to cartesian coordinates
            x = r * np.sin(az)
            y = r * np.cos(az)
            
-           # 크기 확인을 위한 출력
+           # Print sizes for verification
            print(f"x shape: {x.shape}")
            print(f"y shape: {y.shape}")
            print(f"sweep_data shape: {sweep_data.shape}")
            
-           # 플롯 생성
+           # Create plot
            fig = plt.figure(figsize=(10, 10), facecolor='black')
            ax = plt.axes(facecolor='black')
            
-           # 데이터 플롯
+           # Plot data
            mesh = ax.pcolormesh(x/1000, y/1000, sweep_data,
                               cmap='Greys_r',
                               vmin=-20,
@@ -60,5 +60,5 @@ def radar_to_cartesian(file_path, variable='DBZH'):
            
    ds.close()
 
-# 함수 실행
+# Execute function
 radar_to_cartesian('korea_data.nc', 'DBZH')

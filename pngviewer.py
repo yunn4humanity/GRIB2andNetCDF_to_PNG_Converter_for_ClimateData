@@ -3,39 +3,39 @@ import matplotlib.pyplot as plt
 from PIL import Image
 
 def visualize_intensity(image_path):
-    # 이미지 로드
+    # Load image
     img = Image.open(image_path)
     pixels = np.array(img)
     
-    # 이미지 크기와 차원 확인
-    print(f"이미지 크기: {pixels.shape}")
-    print(f"이미지 차원 수: {len(pixels.shape)}")
+    # Check image size and dimensions
+    print(f"Image size: {pixels.shape}")
+    print(f"Number of image dimensions: {len(pixels.shape)}")
     
-    # 흑백 이미지 강도 시각화
+    # Visualize grayscale image intensity
     plt.figure(figsize=(10, 8))
     
-    # 강도 맵 표시
+    # Display intensity map
     im = plt.imshow(pixels, cmap='hot')
     plt.title('Grayscale Intensity')
     
-    # 컬러바 추가
+    # Add colorbar
     plt.colorbar(im, label='Intensity')
     
-    # 축 레이블 추가
+    # Add axis labels
     plt.xlabel('X coordinate')
     plt.ylabel('Y coordinate')
     
     plt.tight_layout()
     plt.show()
 
-    # 통계 정보 출력
-    print("\n이미지 통계:")
-    print(f"최소값: {np.min(pixels)}")
-    print(f"최대값: {np.max(pixels)}")
-    print(f"평균값: {np.mean(pixels):.2f}")
-    print(f"표준편차: {np.std(pixels):.2f}")
+    # Print statistical information
+    print("\nImage statistics:")
+    print(f"Minimum value: {np.min(pixels)}")
+    print(f"Maximum value: {np.max(pixels)}")
+    print(f"Mean value: {np.mean(pixels):.2f}")
+    print(f"Standard deviation: {np.std(pixels):.2f}")
 
-    # 픽셀값 분포 히스토그램
+    # Pixel value distribution histogram
     plt.figure(figsize=(10, 6))
     plt.hist(pixels.flatten(), bins=256, range=(0, 255), density=True)
     plt.title('Pixel Intensity Distribution')
@@ -45,5 +45,5 @@ def visualize_intensity(image_path):
     plt.show()
 
 if __name__ == "__main__":
-    image_path = 'korea_data.png'  # 분석할 이미지 경로
+    image_path = 'korea_data.png'  # Path to the image for analysis
     visualize_intensity(image_path)

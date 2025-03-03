@@ -1,16 +1,16 @@
 import pygrib
 
-# GRIB 파일 열기
+# Open GRIB file
 grbs = pygrib.open('usa_data.grib2')
 
-# 모든 메시지 출력
+# Print all messages
 for grb in grbs:
     print(grb)
 
-# 특정 메시지 선택 및 데이터 읽기
-grb = grbs.select()[0]  # 첫 번째 메시지
-data = grb.values  # 데이터 값
-lats, lons = grb.latlons()  # 위도/경도 격자
+# Select specific message and read data
+grb = grbs.select()[0]  # First message
+data = grb.values  # Data values
+lats, lons = grb.latlons()  # Latitude/longitude grid
 
 print(data)
 

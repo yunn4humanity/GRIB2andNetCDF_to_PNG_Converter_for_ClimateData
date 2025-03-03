@@ -9,31 +9,31 @@ import traceback
 
 def radar_to_cartesian(file_path, output_dir, variable='DBZH'):
     """
-    레이더 데이터를 카테시안 좌표계로 변환하여 PNG로 저장
+    Convert radar data to cartesian coordinates and save as PNG
     
     Parameters:
-    file_path (str): NC 파일 경로
-    output_dir (str): PNG 파일 저장 경로
-    variable (str): 변환할 변수명
+    file_path (str): Path to NC file
+    output_dir (str): Path to save PNG files
+    variable (str): Variable name to convert
     
     Returns:
-    list: 생성된 PNG 파일들의 경로 리스트
+    list: List of paths to generated PNG files
     """
     generated_files = []
     try:
         print(f"\nProcessing file: {file_path}")
         ds = xr.open_dataset(file_path)
         
-        # 데이터셋 구조 확인
+        # Check dataset structure
         print(f"Dataset variables: {list(ds.variables.keys())}")
         print(f"Dataset dimensions: {ds.dims}")
         
-        # variable이 존재하는지 확인
+        # Check if variable exists
         if variable not in ds.variables:
             print(f"Warning: Variable '{variable}' not found in dataset. Available variables: {list(ds.variables.keys())}")
             return generated_files
         
-        # sweep_start_ray_index가 존재하는지 확인
+        # Check if sweep_start_ray_index exists
         if 'sweep_start_ray_index' not in ds.variables:
             print("Warning: 'sweep_start_ray_index' not found in dataset")
             return generated_files
@@ -113,12 +113,12 @@ def radar_to_cartesian(file_path, output_dir, variable='DBZH'):
 
 def process_radar_files(input_dir, output_dir, zip_path):
     """
-    지정된 디렉토리의 모든 NC 파일을 처리하고 결과를 ZIP으로 압축
+    Process all NC files in the specified directory and compress results to ZIP
     
     Parameters:
-    input_dir (str): NC 파일이 있는 디렉토리 경로
-    output_dir (str): PNG 파일을 저장할 디렉토리 경로
-    zip_path (str): 최종 ZIP 파일 경로
+    input_dir (str): Path to directory with NC files
+    output_dir (str): Path to directory for saving PNG files
+    zip_path (str): Path to final ZIP file
     """
     os.makedirs(output_dir, exist_ok=True)
     
@@ -152,10 +152,10 @@ def process_radar_files(input_dir, output_dir, zip_path):
     print(f"Total PNG files generated: {len(all_generated_files)}")
     print(f"ZIP file created at: {zip_path}")
 
-# 사용 예시
+# Usage example
 if __name__ == "__main__":
-    input_directory = "D:\GLP\Korea_Climate_Data\extracted_netcdf"  # NC 파일이 있는 디렉토리
-    output_directory = "D:\GLP\Korea_Climate_Data\KoreanPngDataset"  # PNG 파일을 저장할 디렉토리
-    zip_file_path = "D:\GLP\Korea_Climate_Data/KoreaClimateDataset.zip"  # 최종 ZIP 파일 경로
+    input_directory = "D:\GLP\Korea_Climate_Data\extracted_netcdf"  # Directory with NC files
+    output_directory = "D:\GLP\Korea_Climate_Data\KoreanPngDataset"  # Directory to save PNG files
+    zip_file_path = "D:\GLP\Korea_Climate_Data/KoreaClimateDataset.zip"  # Path to final ZIP file
     
     process_radar_files(input_directory, output_directory, zip_file_path)

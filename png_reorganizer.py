@@ -4,12 +4,12 @@ from collections import defaultdict
 
 def reorganize_radar_files(source_dir, target_dir, frames_per_case=29):
     """
-    레이더 PNG 파일들을 재구성하는 함수 - 각 시점의 가장 낮은 sweep만 선택
+    Function to reorganize radar PNG files - select only the lowest sweep for each time point
     
     Parameters:
-    source_dir (str): 원본 PNG 파일들이 있는 디렉토리
-    target_dir (str): 재구성된 파일들을 저장할 디렉토리
-    frames_per_case (int): 각 케이스(폴더)당 필요한 프레임 수
+    source_dir (str): Directory containing original PNG files
+    target_dir (str): Directory to save reorganized files
+    frames_per_case (int): Number of frames needed per case (folder)
     """
     print(f"Starting file reorganization...")
     print(f"Source directory: {source_dir}")
@@ -17,10 +17,10 @@ def reorganize_radar_files(source_dir, target_dir, frames_per_case=29):
     
     os.makedirs(target_dir, exist_ok=True)
     
-    # 시점별로 파일들을 그룹화
+    # Group files by time point
     time_groups = defaultdict(list)
     
-    # 모든 PNG 파일 수집 및 그룹화
+    # Collect and group all PNG files
     total_files_found = 0
     print("\nScanning for PNG files...")
     
@@ -30,12 +30,12 @@ def reorganize_radar_files(source_dir, target_dir, frames_per_case=29):
         
         for file in png_files:
             total_files_found += 1
-            # 파일 이름 파싱 (예: RDR_SSP_FQC_202501081335_sweep_1.png)
+            # Parse filename (e.g.: RDR_SSP_FQC_202501081335_sweep_1.png)
             parts = file.split('_')
             if len(parts) >= 6:
                 try:
-                    time_point = parts[3]  # 시간 정보 (예: 202501081335)
-                    sweep_num = int(parts[5].split('.')[0])  # sweep 번호
+                    time_point = parts[3]  # Time information (e.g., 202501081335)
+                    sweep_num = int(parts[5].split('.')[0])  # Sweep number
                     full_path = os.path.join(root, file)
                     time_groups[time_point].append((sweep_num, full_path))
                     print(f"Processed: {file} (time_point: {time_point}, sweep: {sweep_num})")
@@ -47,21 +47,21 @@ def reorganize_radar_files(source_dir, target_dir, frames_per_case=29):
     print(f"\nTotal PNG files found: {total_files_found}")
     print(f"Unique time points found: {len(time_groups)}")
     
-    # 각 시점별로 가장 낮은 sweep만 선택
+    # Select only the lowest sweep for each time point
     lowest_sweep_files = []
     print("\nSelecting lowest sweeps for each time point...")
     
     for time_point in sorted(time_groups.keys()):
         files = time_groups[time_point]
         if files:
-            # sweep 번호로 정렬하고 가장 낮은 것 선택
+            # Sort by sweep number and select the lowest
             files.sort(key=lambda x: x[0])
             lowest_sweep_files.append((time_point, files[0][1]))
             print(f"Time point {time_point}: Selected sweep {files[0][0]}")
     
     print(f"\nTotal lowest sweep files selected: {len(lowest_sweep_files)}")
     
-    # 선택된 파일들을 29개씩 묶어서 케이스로 구성
+    # Group selected files into cases with 29 frames each
     total_cases = len(lowest_sweep_files) // frames_per_case
     print(f"\nTotal number of complete cases that can be created: {total_cases}")
     
@@ -70,7 +70,7 @@ def reorganize_radar_files(source_dir, target_dir, frames_per_case=29):
         print(f"Need {frames_per_case} files per case, but only found {len(lowest_sweep_files)} files")
         return
     
-    # 각 케이스별로 처리
+    # Process each case
     for case_idx in range(total_cases):
         case_id = str(case_idx).zfill(5)
         case_dir = os.path.join(target_dir, case_id)
@@ -78,7 +78,7 @@ def reorganize_radar_files(source_dir, target_dir, frames_per_case=29):
         
         print(f"\nProcessing case {case_id}...")
         
-        # 이 케이스에 해당하는 29개 파일 복사
+        # Copy the 29 files for this case
         for frame_idx in range(frames_per_case):
             file_idx = case_idx * frames_per_case + frame_idx
             if file_idx < len(lowest_sweep_files):
@@ -86,7 +86,7 @@ def reorganize_radar_files(source_dir, target_dir, frames_per_case=29):
                 new_filename = f"{case_id}-{str(frame_idx).zfill(2)}.png"
                 target_file = os.path.join(case_dir, new_filename)
                 
-                # 파일 복사
+                # Copy file
                 shutil.copy2(source_file, target_file)
                 print(f"Copied: {new_filename}")
             else:
@@ -94,9 +94,9 @@ def reorganize_radar_files(source_dir, target_dir, frames_per_case=29):
                 break
 
 if __name__ == "__main__":
-    # 사용 예시
-    source_directory = "D:/GLP/Korea_Climate_Data/KoreanPngDataset"  # 원본 PNG 파일들이 있는 디렉토리
-    target_directory = "D:/GLP/Korea_Climate_Data/ReorganizedDataset"  # 재구성된 파일들을 저장할 디렉토리
+    # Usage example
+    source_directory = "D:/GLP/Korea_Climate_Data/KoreanPngDataset"  # Directory containing original PNG files
+    target_directory = "D:/GLP/Korea_Climate_Data/ReorganizedDataset"  # Directory to save reorganized files
     
     reorganize_radar_files(source_directory, target_directory)
     print("\nFile reorganization complete!")
